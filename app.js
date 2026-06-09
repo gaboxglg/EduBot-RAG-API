@@ -18,9 +18,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// Endpoint de salud (clave para cuando hagamos el deploy en Render)
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'EduBot RAG Online' });
+// Endpoint de salud para el monitoreo de Render
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ 
+        estado: 'OK', 
+        mensaje: 'Servidor RAG funcionando correctamente',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // 2. Conectamos tus rutas a la API
