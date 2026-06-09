@@ -22,5 +22,6 @@ app.use('/api/v1/chat', chatRoutes);
 
 // 5. Encendemos el motor
 app.listen(3000, () => {
-    console.log(' EduBot RAG corriendo en http://localhost:3000');
+    console.log(` EduBot RAG corriendo en el puerto 3000`);
+    console.log(` Esperando consultas en http://localhost:3000/api/v1/chat/ask`);
 });
