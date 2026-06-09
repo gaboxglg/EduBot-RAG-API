@@ -1,28 +1,69 @@
 const { generateEmbedding } = require('./embedding.service');
 const { findSimilar } = require('../repositories/document.repository');
-const { getGeminiClient } = require('./ai.factory');
 
 const askQuestion = async (question) => {
-  // 1. Convertimos tu pregunta a vector
-  const queryEmbedding = await generateEmbedding(question);
-  
-  // 2. Buscamos en Supabase los documentos más parecidos (RAG)
-  const contextDocs = await findSimilar(queryEmbedding);
-  
-  // 3. Juntamos todo el texto recuperado para darle contexto a Gemini
-  const contextText = contextDocs.map(doc => doc.content).join('\n');
-  
-  // 4. Le pedimos a Gemini que responda usando ese contexto
-  const genAI = getGeminiClient();
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-  
-  const prompt = `Usando el siguiente contexto, responde a la pregunta. 
-  Si no sabes la respuesta basándote en el contexto, di que no lo sabes.
-  Contexto: ${contextText}
-  Pregunta: ${question}`;
-  
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+    // 1. Vectorizamos y buscamos
+    const queryEmbedding = await generateEmbedding(question);
+    const contextDocs = await findSimilar(queryEmbedding);
+    const contextText = contextDocs.map(doc => doc.content).join('\n');
+    
+    const prompt = `Usando el siguiente contexto, responde a la pregunta. 
+    Si no sabes la respuesta basándote en el contexto, di que no lo sabes.
+    
+    Contexto: ${contextText}
+    Pregunta: ${question}`;
+    
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+
+    
+    const modelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+    const modelsRes = await fetch(modelsUrl);
+    const modelsData = await modelsRes.json();
+    
+    if (!modelsRes.ok) throw new Error('Error al conectar con la API de Google.');
+
+    const textModel = modelsData.models.find(m => 
+        m.supportedGenerationMethods && 
+        m.supportedGenerationMethods.includes('generateContent') &&
+        (m.name.includes('flash') || m.name.includes('pro'))
+    );
+
+    if (!textModel) throw new Error('No hay modelos de texto habilitados.');
+
+    console.log('✅ Modelo detectado:', textModel.name);
+
+
+    const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${textModel.name}:generateContent?key=${apiKey}`;
+    
+    
+    let response;
+    let attempts = 0;
+    
+    while (attempts < 3) {
+        response = await fetch(generateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        if (response.status === 503) {
+            attempts++;
+            console.log(`⚠️ Modelo saturado, reintentando (${attempts}/3)...`);
+            await new Promise(r => setTimeout(r, 2000));
+        } else {
+            break;
+        }
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error?.message || 'Error al generar la respuesta.');
+    }
+    
+    return data.candidates[0].content.parts[0].text;
 };
 
 module.exports = { askQuestion };

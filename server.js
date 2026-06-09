@@ -1,8 +1,26 @@
 require('dotenv').config();
-const app = require('./app');
+const express = require('express');
+const { getSupabaseClient } = require('./src/config/supabase');
+const chatRoutes = require('./src/routes/chat.routes');
 
-const PORT = process.env.PORT || 3000;
+// 1. Verificamos Supabase de entrada
+try {
+    getSupabaseClient();
+    console.log(" Supabase inicializado correctamente.");
+} catch (e) {
+    console.error(" ERROR CRÍTICO AL INICIALIZAR SUPABASE:", e.message);
+}
 
-app.listen(PORT, () => {
-  console.log(`EduBot RAG corriendo en http://localhost:${PORT}`);
+// 2. Inicializamos la app
+const app = express();
+
+// 3. Middlewares
+app.use(express.json());
+
+// 4. Rutas conectadas
+app.use('/api/v1/chat', chatRoutes);
+
+// 5. Encendemos el motor
+app.listen(3000, () => {
+    console.log(' EduBot RAG corriendo en http://localhost:3000');
 });

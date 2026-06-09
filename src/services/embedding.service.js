@@ -1,21 +1,36 @@
-const { getGeminiClient } = require('./ai.factory');
-
 const generateEmbedding = async (text) => {
-  try {
-    const genAI = getGeminiClient();
-    const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
-    
-    // Limpiamos los saltos de línea
-    const cleanText = text.replace(/\n/g, ' ');
-    
-    const result = await model.embedContent(cleanText);
-    
-    // Evitamos devolver null o 0, si no hay valores devolvemos un array vacío
-    return result.embedding.values || []; 
-  } catch (error) {
-    console.error(' Error generando embedding con Gemini:', error);
-    throw new Error('No se pudo generar el vector del texto.');
-  }
+    try {
+        const apiKey = process.env.GEMINI_API_KEY;
+        const modelName = "gemini-embedding-001"; 
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:embedContent?key=${apiKey}`;
+        
+        const cleanText = text.replace(/\n/g, ' ');
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: { parts: [{ text: cleanText }] }
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error?.message || 'Error desconocido de Google');
+        }
+
+        if (data.embedding && data.embedding.values) {
+            return data.embedding.values;
+        } else if (data.embedding) {
+            return data.embedding;
+        } else {
+            return []; // Devolvemos array vacío en vez de null si algo falla
+        }
+    } catch (error) {
+        console.error(' Error en embedding:', error.message);
+        throw new Error('No se pudo generar el vector del texto.');
+    }
 };
 
 module.exports = { generateEmbedding };

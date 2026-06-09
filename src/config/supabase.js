@@ -3,14 +3,17 @@ const { createClient } = require('@supabase/supabase-js');
 let supabase = null;
 
 const getSupabaseClient = () => {
-  if (!supabase) {
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
-      throw new Error(' Faltan las variables de entorno de Supabase (URL o SERVICE_KEY)');
+    if (!supabase) {
+        // Volvemos a usar las variables del .env por seguridad
+        const url = process.env.SUPABASE_URL;
+        const key = process.env.SUPABASE_SERVICE_KEY;
+
+        supabase = createClient(url, key, {
+            auth: { persistSession: false },
+            db: { schema: 'public' }
+        });
     }
-    // Inicializamos el cliente con la Service Key
-    supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-  }
-  return supabase;
+    return supabase;
 };
 
 module.exports = { getSupabaseClient };
