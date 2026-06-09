@@ -1,5 +1,11 @@
 const { getSupabaseClient } = require('../config/supabase');
-
+/**
+ * Calcula la similitud de coseno entre dos vectores (Embeddings).
+ * Compara matemáticamente qué tan cerca están los conceptos en el espacio vectorial.
+ * @param {Array<number>} vecA - Vector de la consulta del usuario
+ * @param {Array<number>} vecB - Vector del documento en base de datos
+ * @returns {number} Valor de similitud (más cerca a 1 es más similar)
+ */
 // Función matemática para calcular la similitud vectorial
 const cosineSimilarity = (vecA, vecB) => {
     let dotProduct = 0, normA = 0, normB = 0;
