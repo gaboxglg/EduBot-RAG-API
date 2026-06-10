@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const { processAndSaveDocument } = require('../services/document.service');
-
+const { verifyToken } = require('../middlewares/auth.middleware');
 const router = express.Router();
 
 // Configuramos multer para que guarde el archivo temporalmente en la memoria
@@ -22,8 +22,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const pdfData = await pdfParse(file.buffer);
     const extractedText = pdfData.text || '';
 
-    if (extractedText.trim().length === false) {
-      return res.status(400).json({ error: 'El PDF está vacío o no se pudo leer.' });
+if (!extractedText.trim()) {
+        return res.status(400).json({ error: 'El PDF está vacío o no se pudo leer.' });
     }
 
     // Le pasamos el texto a nuestro "Director de Orquesta"
