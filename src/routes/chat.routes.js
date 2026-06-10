@@ -1,10 +1,11 @@
+const { verifyToken } = require('../middlewares/auth.middleware');
 const express = require('express');
 const { askQuestion } = require('../services/chat.service');
 
 const router = express.Router();
 
-router.post('/ask', async (req, res) => {
-    try {
+router.post('/ask', verifyToken, async (req, res) => {
+        try {
         const { question } = req.body;
 
         if (!question) {
