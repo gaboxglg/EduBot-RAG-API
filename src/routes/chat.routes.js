@@ -4,10 +4,9 @@ const { askQuestion } = require('../services/chat.service');
 
 const router = express.Router();
 
-router.post('/ask', verifyToken, async (req, res) => {
-        try {
+router.post('/ask', verifyToken, async (req, res) => { 
+    try {
         const { question } = req.body;
-
         if (!question) {
             return res.status(400).json({ error: 'Falta enviar la pregunta.' });
         }

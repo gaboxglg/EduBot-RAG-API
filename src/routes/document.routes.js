@@ -4,12 +4,8 @@ const pdfParse = require('pdf-parse');
 const { processAndSaveDocument } = require('../services/document.service');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const router = express.Router();
-
-// Configuramos multer para que guarde el archivo temporalmente en la memoria
 const upload = multer({ storage: multer.memoryStorage() });
-
-// Creamos el endpoint POST /upload
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', verifyToken, upload.single('file'), async (req, res) => { 
   try {
     const file = req.file;
     

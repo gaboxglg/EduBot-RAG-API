@@ -76,6 +76,36 @@
           "403": { "description": "Falta el token de autenticación." }
         }
       }
+    },
+    "/api/v1/documents/upload": {
+      "post": {
+        "summary": "Subir e ingestar un documento PDF",
+        "description": "Recibe un archivo PDF, extrae su texto, lo divide en chunks, genera los embeddings vectoriales con Gemini y los guarda en Supabase.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "El archivo PDF a procesar"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Documento procesado y guardado con éxito." },
+          "400": { "description": "No se envió archivo o el PDF está vacío." },
+          "401": { "description": "Token inválido o expirado." }
+        }
+      }
     }
   }
 }
