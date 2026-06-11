@@ -60,4 +60,26 @@ const findSimilar = async (queryEmbedding, matchThreshold = 0.75, matchCount = 3
     return mejores.length > 0 ? mejores : []; 
 };
 
-module.exports = { findSimilar };
+const save = async (text, embedding, sourceFile, chunkIndex) => {
+    const supabase = getSupabaseClient();
+    
+    // Acá guardamos el pedacito de texto en Supabase
+    const { data, error } = await supabase
+        .from('documents') 
+        .insert([
+            {
+                content: text,
+                embedding: embedding,
+                source_file: sourceFile,
+                chunk_index: chunkIndex
+            }
+        ]);
+
+    if (error) {
+        console.error('ERROR AL GUARDAR EN SUPABASE:', error);
+        throw error;
+    }
+    return data;
+};
+
+module.exports = { findSimilar, save };

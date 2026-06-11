@@ -6,7 +6,7 @@ const chatRoutes = require('./src/routes/chat.routes');
 const documentRoutes = require('./src/routes/document.routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
-
+const cors = require('cors');
 // 1. Verificamos Supabase de entrada
 try {
     getSupabaseClient();
@@ -21,6 +21,11 @@ const app = express();
 // 3. Middlewares
 app.use(express.json());
 
+app.use(cors({
+    origin: '*', // Permitir todo para pruebas
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // 4. Rutas conectadas
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/auth', authRoutes);
