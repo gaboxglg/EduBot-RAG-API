@@ -63,23 +63,22 @@ const findSimilar = async (queryEmbedding, matchThreshold = 0.75, matchCount = 3
 const save = async (text, embedding, sourceFile, chunkIndex) => {
     const supabase = getSupabaseClient();
     
-    // Acá guardamos el pedacito de texto en Supabase
+    const embeddingArray = Array.isArray(embedding) ? embedding : JSON.parse(embedding);
+
     const { data, error } = await supabase
         .from('documents') 
-        .insert([
-            {
-                content: text,
-                embedding: embedding,
-                source_file: sourceFile,
-                chunk_index: chunkIndex
-            }
-        ]);
+        .insert({
+            content: text,
+            embedding: embeddingArray,
+            source_file: sourceFile,
+            chunk_index: chunkIndex
+        })
+        .select('*'); 
 
     if (error) {
-        console.error('ERROR AL GUARDAR EN SUPABASE:', error);
+        console.error('ERROR CRÍTICO AL INSERTAR:', JSON.stringify(error, null, 2));
         throw error;
     }
     return data;
 };
-
 module.exports = { findSimilar, save };
