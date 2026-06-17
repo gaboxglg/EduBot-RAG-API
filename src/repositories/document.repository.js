@@ -21,8 +21,9 @@ const cosineSimilarity = (vecA, vecB) => {
     return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 };
 
-const findSimilar = async (queryEmbedding, matchThreshold = 0.75, matchCount = 3) => {
-    const supabase = getSupabaseClient();
+// Cambiamos el 0.75 por defecto a 0.2
+const findSimilar = async (queryEmbedding, matchThreshold = 0.2, matchCount = 3) => {
+        const supabase = getSupabaseClient();
 
     const { data: documents, error } = await supabase
         .from('documents')

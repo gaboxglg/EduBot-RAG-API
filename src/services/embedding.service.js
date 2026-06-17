@@ -1,7 +1,7 @@
 const generateEmbedding = async (text) => {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
-        const modelName = "gemini-embedding-001"; 
+        const modelName = "text-embedding-004";
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:embedContent?key=${apiKey}`;
         
         const cleanText = text.replace(/\n/g, ' ');
