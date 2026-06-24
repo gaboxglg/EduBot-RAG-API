@@ -29,7 +29,7 @@
     "/api/v1/auth/login": {
       "post": {
         "summary": "Iniciar sesión de usuario",
-        "description": "Permite obtener un token JWT válido utilizando credenciales simulaadas.",
+        "description": "Permite obtener un token JWT válido utilizando credenciales simuladas.",
         "requestBody": {
           "required": true,
           "content": {
@@ -77,10 +77,22 @@
         }
       }
     },
+    "/api/v1/documents": {
+      "get": {
+        "summary": "Obtener todos los documentos",
+        "description": "Devuelve una lista de todos los fragmentos de documentos almacenados en la base de datos (READ del CRUD).",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de documentos obtenida con éxito." },
+          "401": { "description": "Token inválido o expirado." },
+          "500": { "description": "Error interno del servidor." }
+        }
+      }
+    },
     "/api/v1/documents/upload": {
       "post": {
         "summary": "Subir e ingestar un documento PDF",
-        "description": "Recibe un archivo PDF, extrae su texto, lo divide en chunks, genera los embeddings vectoriales con Gemini y los guarda en Supabase.",
+        "description": "Recibe un archivo PDF, extrae su texto, lo divide en chunks, genera los embeddings vectoriales y los guarda en Supabase (CREATE del CRUD).",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -104,6 +116,60 @@
           "200": { "description": "Documento procesado y guardado con éxito." },
           "400": { "description": "No se envió archivo o el PDF está vacío." },
           "401": { "description": "Token inválido o expirado." }
+        }
+      }
+    },
+    "/api/v1/documents/{id}": {
+      "put": {
+        "summary": "Actualizar un documento",
+        "description": "Actualiza el texto de un fragmento de documento específico en la base de datos (UPDATE del CRUD).",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "El ID del documento en Supabase",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string", "example": "Texto corregido para el fragmento..." }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Documento actualizado correctamente." },
+          "400": { "description": "Falta el contenido a actualizar." },
+          "401": { "description": "Token inválido o expirado." }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar un documento",
+        "description": "Elimina un fragmento de documento específico de la base de datos (DELETE del CRUD).",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "El ID del documento a eliminar en Supabase",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Documento eliminado correctamente." },
+          "401": { "description": "Token inválido o expirado." },
+          "500": { "description": "Error interno del servidor." }
         }
       }
     }
