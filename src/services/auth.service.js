@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-const loginUser = (email, password) => {
+export const loginUser = (email, password) => {
     // Simulamos la validación de un usuario en la base de datos
     if (email === 'admin@edubot.com' && password === '123456') {
         
@@ -20,5 +20,3 @@ const loginUser = (email, password) => {
     // Si falla, lanzamos un error
     throw new Error('Credenciales inválidas');
 };
-
-module.exports = { loginUser };

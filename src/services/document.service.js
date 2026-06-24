@@ -1,5 +1,5 @@
-const { generateEmbedding } = require('./embedding.service');
-const { save } = require('../repositories/document.repository');
+import { generateEmbedding } from './embedding.service.js';
+import { save } from '../repositories/document.repository.js';
 
 // Función para cortar el texto largo en pedazos más chicos (chunks)
 const splitTextIntoChunks = (text, chunkSize = 1000) => {
@@ -12,7 +12,7 @@ const splitTextIntoChunks = (text, chunkSize = 1000) => {
 };
 
 // El director de orquesta que une todo
-const processAndSaveDocument = async (text, sourceFile) => {
+export const processAndSaveDocument = async (text, sourceFile) => {
   try {
     const chunks = splitTextIntoChunks(text);
     const savedChunks = [];
@@ -36,5 +36,3 @@ const processAndSaveDocument = async (text, sourceFile) => {
     throw error; // Lanzamos el error para que el controlador lo ataje
   }
 };
-
-module.exports = { processAndSaveDocument };

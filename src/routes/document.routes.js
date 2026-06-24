@@ -1,8 +1,9 @@
-const express = require('express');
-const multer = require('multer');
-const pdfParse = require('pdf-parse-fixed');
-const { processAndSaveDocument } = require('../services/document.service');
-const { verifyToken } = require('../middlewares/auth.middleware');
+import express from 'express';
+import multer from 'multer';
+import pdfParse from 'pdf-parse-fixed';
+import { processAndSaveDocument } from '../services/document.service.js';
+import { verifyToken } from '../middlewares/auth.middleware.js';
+
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -14,8 +15,8 @@ router.post('/upload', verifyToken, upload.single('file'), async (req, res) => {
     }
 
     // Usamos directamente pdfParse
-const pdfData = await pdfParse(file.buffer);
-const extractedText = pdfData.text || '';
+    const pdfData = await pdfParse(file.buffer);
+    const extractedText = pdfData.text || '';
     if (!extractedText.trim()) {
       return res.status(400).json({ error: 'El PDF está vacío o no se pudo leer.' });
     }
@@ -31,6 +32,6 @@ const extractedText = pdfData.text || '';
     console.error('Error en la ruta de upload:', error);
     res.status(500).json({ error: 'Error interno al procesar el documento.' });
   }
-}); // <--- ¡ESTE ERA EL QUE FALTABA! Cierra el router.post
+}); 
 
-module.exports = router;
+export default router;

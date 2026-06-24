@@ -1,7 +1,7 @@
-const { generateEmbedding } = require('./embedding.service');
-const { findSimilar } = require('../repositories/document.repository');
+import { generateEmbedding } from './embedding.service.js';
+import { findSimilar } from '../repositories/document.repository.js';
 
-const askQuestion = async (question) => {
+export const askQuestion = async (question) => {
     // 1. Vectorizamos y buscamos
     const queryEmbedding = await generateEmbedding(question);
     const contextDocs = await findSimilar(queryEmbedding);
@@ -14,7 +14,6 @@ const askQuestion = async (question) => {
     Pregunta: ${question}`;
     
     const apiKey = process.env.GEMINI_API_KEY?.trim();
-
     
     const modelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
     const modelsRes = await fetch(modelsUrl);
@@ -32,9 +31,7 @@ const askQuestion = async (question) => {
 
     console.log('✅ Modelo detectado:', textModel.name);
 
-
     const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${textModel.name}:generateContent?key=${apiKey}`;
-    
     
     let response;
     let attempts = 0;
@@ -65,5 +62,3 @@ const askQuestion = async (question) => {
     
     return data.candidates[0].content.parts[0].text;
 };
-
-module.exports = { askQuestion };

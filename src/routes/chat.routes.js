@@ -1,6 +1,6 @@
-const { verifyToken } = require('../middlewares/auth.middleware');
-const express = require('express');
-const { askQuestion } = require('../services/chat.service');
+import express from 'express';
+import { verifyToken } from '../middlewares/auth.middleware.js';
+import { askQuestion } from '../services/chat.service.js';
 
 const router = express.Router();
 
@@ -24,4 +24,4 @@ router.post('/ask', verifyToken, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
-let supabase = null;
+let supabase;
 
-const getSupabaseClient = () => {
+export const getSupabaseClient = () => {
     if (!supabase) {
         // Volvemos a usar las variables del .env por seguridad
         const url = process.env.SUPABASE_URL;
@@ -15,5 +15,3 @@ const getSupabaseClient = () => {
     }
     return supabase;
 };
-
-module.exports = { getSupabaseClient };

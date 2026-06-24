@@ -1,5 +1,5 @@
 {
-  "name": "ariel",
+  "name": "Gabriel",
   "version": "1.0.0",
   "description": "",
   "main": "probando.js",
@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.107.0",

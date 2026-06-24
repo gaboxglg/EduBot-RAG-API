@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { loginUser } from '../services/auth.service.js';
+
 const router = express.Router();
-const { loginUser } = require('../services/auth.service');
 
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
-
 
     if (!email || !password) {
         return res.status(400).json({ 
@@ -28,4 +28,4 @@ router.post('/login', (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

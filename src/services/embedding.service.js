@@ -1,4 +1,4 @@
-const generateEmbedding = async (text) => {
+export const generateEmbedding = async (text) => {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
         const modelName = "gemini-embedding-001";
@@ -32,5 +32,3 @@ const generateEmbedding = async (text) => {
         throw new Error('No se pudo generar el vector del texto.');
     }
 };
-
-module.exports = { generateEmbedding };

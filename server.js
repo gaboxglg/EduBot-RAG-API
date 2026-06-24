@@ -1,39 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const { getSupabaseClient } = require('./src/config/supabase');
-const authRoutes = require('./src/routes/auth.routes');
-const chatRoutes = require('./src/routes/chat.routes'); 
-const documentRoutes = require('./src/routes/document.routes');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
-const cors = require('cors');
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Importamos la app y la configuración
+import app from './app.js';
+import { getSupabaseClient } from './src/config/supabase.js';
+
 // 1. Verificamos Supabase de entrada
 try {
     getSupabaseClient();
-    console.log(" Supabase inicializado correctamente.");
+    console.log("Supabase inicializado correctamente.");
 } catch (e) {
-    console.error(" ERROR CRÍTICO AL INICIALIZAR SUPABASE:", e.message);
+    console.error("ERROR CRÍTICO AL INICIALIZAR SUPABASE:", e.message);
 }
 
-// 2. Inicializamos la app
-const app = express();
+// 2. Encendemos el motor
+const PORT = process.env.PORT || 3000;
 
-// 3. Middlewares
-app.use(express.json());
-
-app.use(cors({
-    origin: '*', // Permitir todo para pruebas
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-// 4. Rutas conectadas
-app.use('/api/v1/chat', chatRoutes);
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/documents', documentRoutes);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// 5. Encendemos el motor
-app.listen(3000, () => {
-    console.log(` EduBot RAG corriendo en el puerto 3000`);
-    console.log(` Esperando consultas en http://localhost:3000/api/v1/chat/ask`);
+app.listen(PORT, () => {
+    console.log(`EduBot RAG corriendo en el puerto ${PORT}`);
+    console.log(`Esperando consultas en http://localhost:${PORT}/api/v1/chat/ask`);
+    console.log(`Documentación disponible en http://localhost:${PORT}/api-docs`);
 });
