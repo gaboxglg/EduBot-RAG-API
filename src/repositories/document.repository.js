@@ -74,7 +74,7 @@ export const save = async (text, embedding, sourceFile, chunkIndex) => {
         .select('*'); 
 
     if (error) {
-        console.error('ERROR CRÍTICO AL INSERTAR:', JSON.stringify(error, null, 2));
+        console.error('ERROR CRITICO AL INSERTAR:', JSON.stringify(error, null, 2));
         throw error;
     }
     return data;
