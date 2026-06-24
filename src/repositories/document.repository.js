@@ -79,3 +79,39 @@ export const save = async (text, embedding, sourceFile, chunkIndex) => {
     }
     return data;
 };
+
+// --- NUEVAS FUNCIONES CRUD ---
+
+export const getAllDocuments = async () => {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+        .from('documents')
+        .select('id, content, source_file, chunk_index'); 
+
+    if (error) throw error;
+    return data || [];
+};
+
+export const updateDocument = async (id, newContent) => {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+        .from('documents')
+        .update({ content: newContent })
+        .eq('id', id)
+        .select();
+
+    if (error) throw error;
+    return data || [];
+};
+
+export const deleteDocument = async (id) => {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', id)
+        .select();
+
+    if (error) throw error;
+    return data || [];
+};
